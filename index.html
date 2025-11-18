@@ -185,6 +185,32 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        th:hover {
+            background: rgba(74, 222, 128, 0.1);
+            color: #22c55e;
+        }
+
+        th.sortable::after {
+            content: '⇅';
+            margin-left: 8px;
+            opacity: 0.3;
+            font-size: 0.85rem;
+        }
+
+        th.sortable.sorted-asc::after {
+            content: '▲';
+            opacity: 1;
+        }
+
+        th.sortable.sorted-desc::after {
+            content: '▼';
+            opacity: 1;
         }
 
         th.center {
@@ -394,6 +420,8 @@
 
     <script>
         let stockData = [];
+        let sortColumn = 'rank';
+        let sortDirection = 'asc';
 
         async function loadStocks() {
             const contentDiv = document.getElementById('content');
@@ -439,23 +467,26 @@
                 return;
             }
 
+            // Sort data before rendering
+            const sortedData = sortData([...stockData]);
+
             let html = `
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
-                                <th class="right">Rank</th>
-                                <th>Ticker</th>
-                                <th>Company</th>
-                                <th class="center">Mentions</th>
-                                <th class="center">24h Change</th>
-                                <th class="right">Upvotes</th>
+                                <th class="right sortable ${sortColumn === 'rank' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('rank')">Rank</th>
+                                <th class="sortable ${sortColumn === 'ticker' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('ticker')">Ticker</th>
+                                <th class="sortable ${sortColumn === 'name' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('name')">Company</th>
+                                <th class="center sortable ${sortColumn === 'mentions' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('mentions')">Mentions</th>
+                                <th class="center sortable ${sortColumn === 'change' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('change')">24h Change</th>
+                                <th class="right sortable ${sortColumn === 'upvotes' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('upvotes')">Upvotes</th>
                             </tr>
                         </thead>
                         <tbody>
             `;
 
-            stockData.forEach((stock, index) => {
+            sortedData.forEach((stock, index) => {
                 const change = calculateChange(stock.mentions, stock.mentions_24h_ago);
                 const changeClass = change > 0 ? 'change-positive' : change < 0 ? 'change-negative' : 'change-neutral';
                 const changeSymbol = change > 0 ? '▲' : change < 0 ? '▼' : '●';
@@ -481,6 +512,59 @@
             `;
 
             contentDiv.innerHTML = html;
+        }
+
+        function sortTable(column) {
+            if (sortColumn === column) {
+                // Toggle direction if clicking same column
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                // New column, default to ascending
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            renderTable();
+        }
+
+        function sortData(data) {
+            return data.sort((a, b) => {
+                let aVal, bVal;
+
+                switch(sortColumn) {
+                    case 'rank':
+                        aVal = parseInt(a.rank) || 0;
+                        bVal = parseInt(b.rank) || 0;
+                        break;
+                    case 'ticker':
+                        aVal = (a.ticker || '').toLowerCase();
+                        bVal = (b.ticker || '').toLowerCase();
+                        break;
+                    case 'name':
+                        aVal = (a.name || a.ticker || '').toLowerCase();
+                        bVal = (b.name || b.ticker || '').toLowerCase();
+                        break;
+                    case 'mentions':
+                        aVal = parseInt(a.mentions) || 0;
+                        bVal = parseInt(b.mentions) || 0;
+                        break;
+                    case 'change':
+                        aVal = calculateChange(a.mentions, a.mentions_24h_ago);
+                        bVal = calculateChange(b.mentions, b.mentions_24h_ago);
+                        break;
+                    case 'upvotes':
+                        aVal = parseInt(a.upvotes) || 0;
+                        bVal = parseInt(b.upvotes) || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (sortDirection === 'asc') {
+                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                } else {
+                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                }
+            });
         }
 
         function calculateChange(current, previous) {
