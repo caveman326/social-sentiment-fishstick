@@ -25,10 +25,11 @@ The tracker monitors mentions from these Reddit communities:
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Node.js + Express
+- **Backend**: Netlify Serverless Functions
 - **Frontend**: Vanilla JavaScript (no frameworks)
 - **API**: Apewisdom API (free, no authentication)
-- **Styling**: Custom CSS with dark theme
+- **Styling**: Custom CSS with modern gradient design
+- **Hosting**: Netlify (recommended)
 
 ## 📦 Installation
 
@@ -50,40 +51,56 @@ cd stock-ticker-tracker
 npm install
 ```
 
-3. Start the server:
+3. Start the development server:
 ```bash
-npm start
+npm run dev
 ```
 
 4. Open your browser to:
 ```
-http://localhost:3000
+http://localhost:8888
 ```
 
 ## 🚀 Deployment
 
-### Deploy to Render (Free)
+### Deploy to Netlify (Recommended - Free)
 
+**Option 1: Deploy from GitHub (Easiest)**
 1. Push your code to GitHub
-2. Go to [render.com](https://render.com) and sign up
-3. Click "New +" → "Web Service"
+2. Go to [app.netlify.com](https://app.netlify.com) and sign up
+3. Click "Add new site" → "Import an existing project"
 4. Connect your GitHub repository
-5. Use these settings:
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-6. Click "Create Web Service"
+5. Netlify will auto-detect settings from `netlify.toml`
+6. Click "Deploy site"
+7. Your site will be live at `https://your-site-name.netlify.app`
 
-### Deploy to Railway (Free)
+**Option 2: Deploy with Netlify CLI**
+```bash
+# Install dependencies
+npm install
 
+# Login to Netlify
+npx netlify login
+
+# Initialize the site
+npx netlify init
+
+# Deploy to production
+npm run deploy
+```
+
+**Option 3: Drag & Drop**
+1. Run `npm install` locally
+2. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
+3. Drag your project folder to deploy instantly
+
+### Deploy to Vercel (Alternative)
+
+Vercel also supports serverless functions:
 1. Push your code to GitHub
-2. Go to [railway.app](https://railway.app) and sign up
-3. Click "New Project" → "Deploy from GitHub repo"
-4. Select your repository
-5. Railway will auto-detect and deploy
-
-### Deploy to Vercel (Free)
-
-Note: Vercel requires serverless functions. Use Render or Railway for easier deployment.
+2. Go to [vercel.com](https://vercel.com) and sign up
+3. Click "New Project" → Import your repository
+4. Vercel will auto-deploy with zero configuration
 
 ## 🎨 Embedding
 
@@ -101,9 +118,9 @@ To embed the tracker on your website:
 
 ## 📊 API Endpoints
 
-### GET `/api/stocks`
+### GET `/.netlify/functions/stocks`
 
-Returns the current top 100 trending stocks.
+Returns the current top 100 trending stocks from Reddit.
 
 **Response:**
 ```json
@@ -127,22 +144,25 @@ Returns the current top 100 trending stocks.
 
 ## 🔧 Configuration
 
-Edit `server.js` to customize:
+Customize the following:
 
-- **Cache duration**: Change `CACHE_DURATION` (default: 5 minutes)
-- **Port**: Change `PORT` environment variable (default: 3000)
-- **Auto-refresh interval**: Edit `setInterval` in `public/index.html` (default: 5 minutes)
+- **Cache duration**: Edit `CACHE_DURATION` in `netlify/functions/stocks.js` (default: 5 minutes)
+- **Auto-refresh interval**: Edit `setInterval` in `index.html` (default: 5 minutes)
+- **Netlify settings**: Modify `netlify.toml` for build and deployment settings
 
 ## 📝 Project Structure
 
 ```
 stock-ticker-tracker/
-├── server.js           # Express backend server
-├── package.json        # Dependencies and scripts
-├── public/
-│   └── index.html     # Frontend application
-├── README.md          # This file
-└── .gitignore         # Git ignore rules
+├── index.html              # Frontend application
+├── netlify/
+│   └── functions/
+│       └── stocks.js       # Serverless API function
+├── netlify.toml            # Netlify configuration
+├── _redirects              # URL redirect rules
+├── package.json            # Dependencies and scripts
+├── README.md               # This file
+└── .gitignore              # Git ignore rules
 ```
 
 ## 🤝 Contributing
