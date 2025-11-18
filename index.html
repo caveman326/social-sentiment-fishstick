@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Ticker Tracker | Trending Stocks on Reddit</title>
+    <meta name="description" content="Track the most popular stock tickers mentioned on Reddit">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid #1a1f3a;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #4ade80;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            padding: 20px;
+            background: #151b35;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4ade80;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #151b35;
+            border-radius: 10px;
+        }
+
+        .refresh-btn {
+            background: #4ade80;
+            color: #0a0e27;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: #22c55e;
+            transform: translateY(-2px);
+        }
+
+        .refresh-btn:disabled {
+            background: #374151;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .last-updated {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+
+        .spinner {
+            border: 3px solid #1a1f3a;
+            border-top: 3px solid #4ade80;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #151b35;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: #1a1f3a;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #4ade80;
+            border-bottom: 2px solid #0a0e27;
+        }
+
+        th.center {
+            text-align: center;
+        }
+
+        th.right {
+            text-align: right;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #1a1f3a;
+        }
+
+        tr:hover {
+            background: #1a1f3a;
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #9ca3af;
+            text-align: right;
+        }
+
+        .ticker {
+            font-weight: bold;
+            color: #4ade80;
+            font-size: 1.1rem;
+        }
+
+        .company-name {
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-ticker {
+            background: #4ade80;
+            color: #0a0e27;
+        }
+
+        .mentions {
+            text-align: center;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+
+        .change {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .change-positive {
+            color: #4ade80;
+        }
+
+        .change-negative {
+            color: #ef4444;
+        }
+
+        .change-neutral {
+            color: #9ca3af;
+        }
+
+        .upvotes {
+            text-align: right;
+            color: #9ca3af;
+        }
+
+        .error {
+            background: #991b1b;
+            color: #fecaca;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 10px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📈 Stock Ticker Tracker</h1>
+            <p class="subtitle">Trending Stocks on Reddit</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalStocks">-</div>
+                <div class="stat-label">Total Stocks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalMentions">-</div>
+                <div class="stat-label">Total Mentions</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="refresh-btn" id="refreshBtn" onclick="loadStocks()">
+                🔄 Refresh Data
+            </button>
+            <div class="last-updated">
+                Last updated: <span id="lastUpdated">Never</span>
+            </div>
+        </div>
+
+        <div id="content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading stock data...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let stockData = [];
+
+        async function loadStocks() {
+            const contentDiv = document.getElementById('content');
+            const refreshBtn = document.getElementById('refreshBtn');
+            
+            refreshBtn.disabled = true;
+            refreshBtn.textContent = '⏳ Loading...';
+
+            try {
+                const response = await fetch('/api/stocks');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+
+                const data = await response.json();
+                stockData = data.results || [];
+                
+                renderTable();
+                updateStats();
+                updateLastUpdated();
+                
+            } catch (error) {
+                console.error('Error loading stocks:', error);
+                contentDiv.innerHTML = `
+                    <div class="error">
+                        <h3>⚠️ Error Loading Data</h3>
+                        <p>${error.message}</p>
+                        <p>Please try again later.</p>
+                    </div>
+                `;
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = '🔄 Refresh Data';
+            }
+        }
+
+        function renderTable() {
+            const contentDiv = document.getElementById('content');
+            
+            if (!stockData || stockData.length === 0) {
+                contentDiv.innerHTML = '<div class="loading"><p>No data available</p></div>';
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="right">Rank</th>
+                            <th>Ticker</th>
+                            <th>Company</th>
+                            <th class="center">Mentions</th>
+                            <th class="center">24h Change</th>
+                            <th class="right">Upvotes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            stockData.forEach((stock, index) => {
+                const change = calculateChange(stock.mentions, stock.mentions_24h_ago);
+                const changeClass = change > 0 ? 'change-positive' : change < 0 ? 'change-negative' : 'change-neutral';
+                const changeSymbol = change > 0 ? '▲' : change < 0 ? '▼' : '●';
+                
+                html += `
+                    <tr>
+                        <td class="rank">${stock.rank || index + 1}</td>
+                        <td><span class="badge badge-ticker">${stock.ticker}</span></td>
+                        <td class="company-name">${stock.name || stock.ticker}</td>
+                        <td class="mentions">${formatNumber(stock.mentions)}</td>
+                        <td class="change ${changeClass}">
+                            ${changeSymbol} ${Math.abs(change).toFixed(0)}%
+                        </td>
+                        <td class="upvotes">${formatNumber(stock.upvotes)}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            contentDiv.innerHTML = html;
+        }
+
+        function calculateChange(current, previous) {
+            if (!previous || previous === 0) return 0;
+            return ((current - previous) / previous) * 100;
+        }
+
+        function formatNumber(num) {
+            if (!num) return '0';
+            return num.toLocaleString();
+        }
+
+        function updateStats() {
+            const totalStocks = stockData.length;
+            const totalMentions = stockData.reduce((sum, stock) => sum + (stock.mentions || 0), 0);
+            
+            document.getElementById('totalStocks').textContent = formatNumber(totalStocks);
+            document.getElementById('totalMentions').textContent = formatNumber(totalMentions);
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('lastUpdated').textContent = timeString;
+        }
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', loadStocks);
+
+        // Auto-refresh every 5 minutes
+        setInterval(loadStocks, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
+
