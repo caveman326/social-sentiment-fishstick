@@ -14,89 +14,123 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #0a0e27;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            background-attachment: fixed;
             color: #e0e0e0;
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px 60px;
         }
 
         header {
             text-align: center;
-            padding: 40px 0;
-            border-bottom: 1px solid #1a1f3a;
+            padding: 60px 0 50px;
+            border-bottom: 2px solid rgba(74, 222, 128, 0.1);
+            margin-bottom: 50px;
         }
 
         h1 {
-            font-size: 2.5rem;
-            color: #4ade80;
-            margin-bottom: 10px;
+            font-size: 3rem;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            font-weight: 700;
+            letter-spacing: -1px;
         }
 
         .subtitle {
-            color: #9ca3af;
-            font-size: 1.1rem;
+            color: #a1a8b8;
+            font-size: 1.2rem;
+            font-weight: 400;
         }
 
         .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 30px 0;
-            padding: 20px;
-            background: #151b35;
-            border-radius: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin: 0 0 40px 0;
         }
 
         .stat-item {
             text-align: center;
+            padding: 30px 20px;
+            background: rgba(21, 27, 53, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(74, 222, 128, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-4px);
+            border-color: rgba(74, 222, 128, 0.3);
+            box-shadow: 0 8px 24px rgba(74, 222, 128, 0.15);
         }
 
         .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #4ade80;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
         }
 
         .stat-label {
             color: #9ca3af;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
         }
 
         .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: #151b35;
-            border-radius: 10px;
+            margin: 0 0 30px 0;
+            padding: 20px 24px;
+            background: rgba(21, 27, 53, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(74, 222, 128, 0.1);
         }
 
         .refresh-btn {
-            background: #4ade80;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
             color: #0a0e27;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 28px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
         }
 
-        .refresh-btn:hover {
-            background: #22c55e;
+        .refresh-btn:hover:not(:disabled) {
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
+        }
+
+        .refresh-btn:active:not(:disabled) {
+            transform: translateY(0);
         }
 
         .refresh-btn:disabled {
-            background: #374151;
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .last-updated {
@@ -106,18 +140,18 @@
 
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px 20px;
             color: #9ca3af;
         }
 
         .spinner {
-            border: 3px solid #1a1f3a;
+            border: 3px solid rgba(74, 222, 128, 0.1);
             border-top: 3px solid #4ade80;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 24px;
         }
 
         @keyframes spin {
@@ -125,24 +159,32 @@
             100% { transform: rotate(360deg); }
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #151b35;
-            border-radius: 10px;
+        .table-wrapper {
+            background: rgba(21, 27, 53, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(74, 222, 128, 0.1);
             overflow: hidden;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
         thead {
-            background: #1a1f3a;
+            background: rgba(26, 31, 58, 0.8);
         }
 
         th {
-            padding: 15px;
+            padding: 18px 16px;
             text-align: left;
             font-weight: 600;
             color: #4ade80;
-            border-bottom: 2px solid #0a0e27;
+            border-bottom: 2px solid rgba(74, 222, 128, 0.2);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         th.center {
@@ -153,19 +195,28 @@
             text-align: right;
         }
 
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #1a1f3a;
+        tbody tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(26, 31, 58, 0.5);
         }
 
-        tr:hover {
-            background: #1a1f3a;
+        tbody tr:hover {
+            background: rgba(26, 31, 58, 0.6);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 18px 16px;
         }
 
         .rank {
-            font-weight: bold;
+            font-weight: 600;
             color: #9ca3af;
             text-align: right;
+            font-size: 0.95rem;
         }
 
         .ticker {
@@ -181,26 +232,30 @@
 
         .badge {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .badge-ticker {
-            background: #4ade80;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
             color: #0a0e27;
+            box-shadow: 0 2px 8px rgba(74, 222, 128, 0.3);
         }
 
         .mentions {
             text-align: center;
-            font-weight: bold;
+            font-weight: 600;
             color: #e0e0e0;
+            font-size: 1rem;
         }
 
         .change {
             text-align: center;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 0.95rem;
         }
 
         .change-positive {
@@ -218,38 +273,86 @@
         .upvotes {
             text-align: right;
             color: #9ca3af;
+            font-weight: 500;
         }
 
         .error {
-            background: #991b1b;
+            background: rgba(153, 27, 27, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             color: #fecaca;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 16px;
             text-align: center;
-            margin: 20px 0;
+            margin: 40px 0;
+        }
+
+        .error h3 {
+            margin-bottom: 12px;
+            color: #ef4444;
         }
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
             }
 
             .stats-bar {
-                flex-direction: column;
-                gap: 15px;
+                grid-template-columns: 1fr;
+                gap: 16px;
             }
 
             .controls {
                 flex-direction: column;
-                gap: 10px;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
             }
 
             table {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
             }
 
             th, td {
-                padding: 10px 5px;
+                padding: 12px 8px;
+            }
+
+            .company-name {
+                display: none;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px 40px;
+            }
+
+            header {
+                padding: 40px 0 30px;
+                margin-bottom: 30px;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .upvotes {
+                display: none;
+            }
+
+            th:last-child,
+            td:last-child {
+                display: none;
             }
         }
     </style>
@@ -257,7 +360,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>📈 Stock Ticker Tracker</h1>
+            <h1>Stock Ticker Tracker</h1>
             <p class="subtitle">Trending Stocks on Reddit</p>
         </header>
 
@@ -274,7 +377,7 @@
 
         <div class="controls">
             <button class="refresh-btn" id="refreshBtn" onclick="loadStocks()">
-                🔄 Refresh Data
+                Refresh Data
             </button>
             <div class="last-updated">
                 Last updated: <span id="lastUpdated">Never</span>
@@ -295,67 +398,68 @@
         async function loadStocks() {
             const contentDiv = document.getElementById('content');
             const refreshBtn = document.getElementById('refreshBtn');
-            
+
             refreshBtn.disabled = true;
-            refreshBtn.textContent = '⏳ Loading...';
+            refreshBtn.textContent = 'Loading...';
 
             try {
-                const response = await fetch('/api/stocks');
-                
+                const response = await fetch('/.netlify/functions/stocks');
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
 
                 const data = await response.json();
                 stockData = data.results || [];
-                
+
                 renderTable();
                 updateStats();
                 updateLastUpdated();
-                
+
             } catch (error) {
                 console.error('Error loading stocks:', error);
                 contentDiv.innerHTML = `
                     <div class="error">
-                        <h3>⚠️ Error Loading Data</h3>
+                        <h3>Error Loading Data</h3>
                         <p>${error.message}</p>
                         <p>Please try again later.</p>
                     </div>
                 `;
             } finally {
                 refreshBtn.disabled = false;
-                refreshBtn.textContent = '🔄 Refresh Data';
+                refreshBtn.textContent = 'Refresh Data';
             }
         }
 
         function renderTable() {
             const contentDiv = document.getElementById('content');
-            
+
             if (!stockData || stockData.length === 0) {
                 contentDiv.innerHTML = '<div class="loading"><p>No data available</p></div>';
                 return;
             }
 
             let html = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="right">Rank</th>
-                            <th>Ticker</th>
-                            <th>Company</th>
-                            <th class="center">Mentions</th>
-                            <th class="center">24h Change</th>
-                            <th class="right">Upvotes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="right">Rank</th>
+                                <th>Ticker</th>
+                                <th>Company</th>
+                                <th class="center">Mentions</th>
+                                <th class="center">24h Change</th>
+                                <th class="right">Upvotes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             `;
 
             stockData.forEach((stock, index) => {
                 const change = calculateChange(stock.mentions, stock.mentions_24h_ago);
                 const changeClass = change > 0 ? 'change-positive' : change < 0 ? 'change-negative' : 'change-neutral';
                 const changeSymbol = change > 0 ? '▲' : change < 0 ? '▼' : '●';
-                
+
                 html += `
                     <tr>
                         <td class="rank">${stock.rank || index + 1}</td>
@@ -371,8 +475,9 @@
             });
 
             html += `
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             `;
 
             contentDiv.innerHTML = html;
@@ -391,7 +496,7 @@
         function updateStats() {
             const totalStocks = stockData.length;
             const totalMentions = stockData.reduce((sum, stock) => sum + (stock.mentions || 0), 0);
-            
+
             document.getElementById('totalStocks').textContent = formatNumber(totalStocks);
             document.getElementById('totalMentions').textContent = formatNumber(totalMentions);
         }
@@ -410,4 +515,3 @@
     </script>
 </body>
 </html>
-
